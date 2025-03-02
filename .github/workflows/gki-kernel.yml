@@ -185,7 +185,7 @@ jobs:
           elif [[ "${{ inputs.kernelsu_branch }}" == "Other" && -n "${{ inputs.kernelsu_branch_other }}" ]]; then
             echo "BRANCH=-s ${{ inputs.kernelsu_branch_other }}" >> $GITHUB_ENV
           else
-            echo "BRANCH=-s next" >> $GITHUB_ENV
+            echo "BRANCH=-" >> $GITHUB_ENV
             # echo "Error: Custom branch not provided for 'Other'" >&2
             # exit 1
           fi
@@ -227,11 +227,6 @@ jobs:
             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
             cd ./KernelSU
             patch -p1 --forward < 10_enable_susfs_for_ksu.patch
-          elif [ "${{ inputs.kernelsu_variant }}" == "Next" ]; then
-            echo "Applying SUSFS patches for KernelSU-Next..."
-            cd ./KernelSU-Next
-            cp ../../kernel_patches/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch ./
-            patch -p1 --forward < 0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch || true
           elif [ "${{ inputs.kernelsu_variant }}" == "MKSU" ]; then
             echo "Applying SUSFS patches for MKSU..."
             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
@@ -243,14 +238,15 @@ jobs:
             patch -p1 < mksu_susfs.patch
             cp ../../kernel_patches/fix.patch ./KernelSU/
             patch -p1 < fix.patch
-            
+          # elif [ "${{ inputs.kernelsu_variant }}" == "Next" ]; then
           else
             echo "Applying SUSFS patches for KernelSU-Next..."
             cd ./KernelSU-Next
             cp ../../kernel_patches/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch ./
             patch -p1 --forward < 0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch || true
-            # echo "Invalid KernelSU variant selected!"
-            # exit 1
+          # else
+          #   echo "Invalid KernelSU variant selected!"
+          #   exit 1
           fi
 
           # Change to common directory and apply common SUSFS patch
